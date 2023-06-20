@@ -158,15 +158,16 @@ El MMM se caracteriza por dos hipótesis, una de ellas que la inversión en anun
 **1. Adstock o transformación de acciones publicitarias**
 
 Esta transformación hace referencia a la teoría de que la publicidad se retrasa y decae después de la exposición inicial, y se relaciona con el recuerdo del anuncio por parte del consumidor. En otras palabras, esta memoria de los consumidores decae a medida que pasa el tiempo. En Robyn, existen tres diferentes tipos de transformaciones de acciones publicitarias: geométrica, PDF Weibull y CDF Weibull. En este estudio, hemos seleccionado la transformación geométrica de Adstock, ya que es más rápida de ejecutar que la Weibull. La implementación de este tipo de transformación se define mediante la siguiente función:
- ! [imagen]("C:\Users\antch\OneDrive\Escritorio\1.jpg") .
+
+ 〖x_adstocked〗_(i,j)=〖x_raw〗_(i,j)+θ_j*〖x_raw〗_(i-1,j)
+ 
 Asimismo, la propiedad de decaimiento de la transformación geométrica de Adstock es que el límite de la suma infinita es: 1/(1-theta) y se representa de la siguiente manera:
 
 **Figura 1**:
 
  *Gráfica transformación geométrica de Adstock*
- 
-![image](https://github.com/Antchica/Marketing-Mix-Modeling-con-Robyn/assets/136733800/2ca5d917-3ca8-471f-a5fb-d0e4b1488b11)
 
+ 
 Para implementarla en R debemos añadir al modelo los siguientes comandos:
 
 ```
@@ -186,11 +187,11 @@ Esta transformación sustenta que cada unidad adicional de publicidad aumenta la
 
 *Gráfica transformación de Saturación*
 
-![image](https://github.com/Antchica/Marketing-Mix-Modeling-con-Robyn/assets/136733800/1b082f8d-023b-4fea-bc23-2c5c788334ac)
 
 Como vemos nos encontramos ante una respuesta no lineal por lo que usamos la transformación de curva S flexible (Hill) para modelarla. Esta función viene definida de la siguiente manera:
 
-![image](https://github.com/Antchica/Marketing-Mix-Modeling-con-Robyn/assets/136733800/9273dec8-d301-4fb2-ac2b-17e4a7182e7e)
+〖x-saturated〗_(i,j)=(〖x_adstocked〗_(i,j)^alpha)/(〖x_adstocked〗_(i,j)^alpha+〖gamma〗^alpha )
+
 
 La función Hill es una función de dos parámetros alfa y gamma, en la que alfa controla la forma de la curva (exponencial o forma de S) de manera que cuanto mayor sea alfa más forma de S tendrá la función y, cuanto más pequeña, tendrá forma de C. Por otro lado, gamma controla el punto de inflexión de tal forma que cuanto mayor sea gamma, más tarde será el punto de inflexión en la curva de respuesta. En la Figura 3 vemos representada la función Hill, donde el eje X  representa los gastos y el eje Y representa las respuestas. De manera que, a medida que aumenta el gasto, la respuesta cambia y, a partir de la curva, entendemos cuál es la respuesta marginal.
 
@@ -198,13 +199,10 @@ La función Hill es una función de dos parámetros alfa y gamma, en la que alfa
 
 *Gráfica función Hill con gamma=0.5*
 
- ![image](https://github.com/Antchica/Marketing-Mix-Modeling-con-Robyn/assets/136733800/5a03e544-dfec-4256-b9cc-ead050bd0285)
 
 **Figura 4:**
 
  *Gráfica función Hill con alpha=2*
- 
-![image](https://github.com/Antchica/Marketing-Mix-Modeling-con-Robyn/assets/136733800/dd3a7df4-41f2-4995-97a1-cac74cec7601)
 
 
 Para **implementar esta transformación en R** debemos:
@@ -219,11 +217,11 @@ Una vez completada la configuración de la ingeniería de características, pasa
 
 El Marketing Mix Modeling utiliza este modelo de regresión que tiene como objetivo utilizar la regularización para reducir la varianza mediante la introducción de un sesgo. El propósito de la regresión de Ridge es obtener una ecuación que pueda describir la variable dependiente, resolver el problema de la multicolinealidad y evitar el sobreajuste. La notación matemática para la regresión de Ridge es la siguiente:
 
-![image](https://github.com/Antchica/Marketing-Mix-Modeling-con-Robyn/assets/136733800/9119f35f-6f01-4445-bc93-52ce9cf3a7e3)
+∑_(t=1)^n▒〖(y_t-f_β (x_t ))^2+λ∑_(j=1)^p▒β_j^2 〗,donde β_j  es el peso de la variable x_j
 
 Asimismo, esta regresión trata de asignar un coeficiente a cada variable independiente para mejorar el rendimiento predictivo del Marketing Mix Modeling. Esto se puede ver en la siguiente función, donde podemos ver cómo el KPI se ve afectado por cambios en todos los factores para los existen datos:
 
-![image](https://github.com/Antchica/Marketing-Mix-Modeling-con-Robyn/assets/136733800/d1c4a541-c127-4cfb-a539-df4e94c81d07)
+KPIt=β_0+β_1 x_1+β_2 x_2+β_3 x_3+β_4 x_4+⋯+β_nxn
 
 Donde:
 **〖KPI〗_t:** El KPI en el momento (t) que desea modelar.
@@ -337,7 +335,6 @@ Para obtener los modelos candidatos a modelo final, aplicamos la técnica de los
 
 *Gráfica selección de modelo líneas de Pareto*
 
-![image](https://github.com/Antchica/Marketing-Mix-Modeling-con-Robyn/assets/136733800/fc9d0c6e-1f11-4e7d-96ed-fae6f4382b5e)
 
 Sin embargo, en lugar de explorar todas las soluciones óptimas de Pareto (puntos), Robyn agrupa en clúster las soluciones con el ROI más similares entre sí y los selecciona como modelos candidatos a modelo final. En cambio, esto no significa que estos sean necesariamente los mejores modelos o los modelos más "correctos”. En la Tabla 1 podemos ver los modelos candidatos propuestos por Robyn.
 
@@ -345,7 +342,6 @@ Sin embargo, en lugar de explorar todas las soluciones óptimas de Pareto (punto
 
 *Tabla de los clústers o modelos óptimos candidatos a modelo final*
 
-![image](https://github.com/Antchica/Marketing-Mix-Modeling-con-Robyn/assets/136733800/552ce288-c118-4326-9b71-0b40bce8c41f)
 
 Para escoger uno de los modelos candidatos como modelo final, elegimos la técnica de los parámetros estadísticos de manera que en la tabla (Tabla 2), podemos ver los parámetros para cada uno de los modelos proporcionados por Robyn.
 
@@ -353,7 +349,6 @@ Para escoger uno de los modelos candidatos como modelo final, elegimos la técni
 
 *Tabla resumen de parámetros estadísticos para cada modelo*
 
-![image](https://github.com/Antchica/Marketing-Mix-Modeling-con-Robyn/assets/136733800/81e80e14-fd5a-421e-b0e6-781162376289)
 
 Entre todos estos modelos (Tabla 2), observamos que los modelos con mejor ajuste (mayor R2 y menor NRMSE) fueron: **4_201_8** y **4_199_5**. Sin embargo, vemos que el **modelo 4_201_8** presenta el R2 más alto (0.7784) y el error de predicción del modelo más bajo (0.0727) de los dos modelos seleccionados, aunque presenta el DECOMP.RSSD más alto (0.4933), este modelo será el candidato más idóneo de entre todos los obtenidos. 
 
@@ -367,7 +362,6 @@ La Figura 6 muestra un modelo más o menos ajustado, ya que la línea amarilla, 
 
 *Gráfica datos reales Vs datos predictivos*
 
-![image](https://github.com/Antchica/Marketing-Mix-Modeling-con-Robyn/assets/136733800/37ddbcf7-08c1-4bca-a3c6-3611855b9c03)
 
 **2.	Cascada de descomposición de respuesta por predictor**
 
@@ -382,8 +376,6 @@ Por otro lado, cuando analizamos la tendencia del gráfico vemos que hay algunos
 **Figura 7**
 
 *Gráfica cascada de descomposición de respuesta por predictor*
-
-![image](https://github.com/Antchica/Marketing-Mix-Modeling-con-Robyn/assets/136733800/a96fcc48-df59-4dac-a210-59974c11dfe0)
 
 **3.	Porcentaje del gasto frente al efecto con el ROI total**
 
@@ -406,7 +398,6 @@ Por otro lado, existen otros canales en los que se ha invertido dinero y, sin em
 
 *Gráfica porcentaje de gasto frente al efecto con el ROI total*
 
-![image](https://github.com/Antchica/Marketing-Mix-Modeling-con-Robyn/assets/136733800/0c3a78ad-9505-4132-af4b-bc40ee55e09b)
 
 **4.	Curvas de respuesta**
    
@@ -416,7 +407,6 @@ En este caso, vemos que el canal menos saturado es la publicidad en periódicos,
 
 *Gráfica curvas de respuesta*
 
-![image](https://github.com/Antchica/Marketing-Mix-Modeling-con-Robyn/assets/136733800/226f51f0-7911-48ce-8c3f-d1520500845a)
 
 **5.	Tasa de caída de Adstock**
 
@@ -436,7 +426,6 @@ De este gráfico (Figura 10), podemos destacar que los canales con una mayor tas
 
 *Gráfica tasa de caída de Adstock*
 
-![image](https://github.com/Antchica/Marketing-Mix-Modeling-con-Robyn/assets/136733800/f9686a15-f3fa-46d9-af10-8ec0b51c490d)
 
 **10.	Ajustados Vs Residuos**
     
@@ -447,7 +436,6 @@ Por el contrario, la línea de regresión (línea azul) predice sistemáticament
 
 *Gráfico Fitted vs. Residual*
 
-![image](https://github.com/Antchica/Marketing-Mix-Modeling-con-Robyn/assets/136733800/60aa1308-4969-4f8e-a039-852303f7d4a9)
 
 ## Conclusiones
 

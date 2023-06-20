@@ -158,9 +158,7 @@ El MMM se caracteriza por dos hipótesis, una de ellas que la inversión en anun
 **1. Adstock o transformación de acciones publicitarias**
 
 Esta transformación hace referencia a la teoría de que la publicidad se retrasa y decae después de la exposición inicial, y se relaciona con el recuerdo del anuncio por parte del consumidor. En otras palabras, esta memoria de los consumidores decae a medida que pasa el tiempo. En Robyn, existen tres diferentes tipos de transformaciones de acciones publicitarias: geométrica, PDF Weibull y CDF Weibull. En este estudio, hemos seleccionado la transformación geométrica de Adstock, ya que es más rápida de ejecutar que la Weibull. La implementación de este tipo de transformación se define mediante la siguiente función:
-
-![image](https://github.com/Antchica/Marketing-Mix-Modeling-con-Robyn/assets/136733800/bfe6c781-3cb0-42ef-ac10-c5dfb9f0c687) 
-
+ ! [imagen]("C:\Users\antch\OneDrive\Escritorio\1.jpg") .
 Asimismo, la propiedad de decaimiento de la transformación geométrica de Adstock es que el límite de la suma infinita es: 1/(1-theta) y se representa de la siguiente manera:
 
 **Figura 1**:
